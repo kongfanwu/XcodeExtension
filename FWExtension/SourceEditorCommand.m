@@ -20,16 +20,17 @@
         NSInteger totalLinesCount = totalLines.count;
 //        NSString *curLineContent = totalLines[curIndex];
         
-        for (int i = 0; i < totalLinesCount; i++) {
-            NSString *lineContent = totalLines[i];
-            if ([lineContent containsString:@"@interface"]) {
-                
-                NSString *selectLineContent = totalLines[curIndex];
-                NSString *userSelectContent = [selectLineContent substringWithRange:NSMakeRange(selection.start.column, selection.end.column - 4)];
-                NSString *insertContent = [NSString stringWithFormat:@"#import \"%@.h\"", userSelectContent];
-                
-                [totalLines insertObject:insertContent atIndex:i - 1];
-                break;
+        NSString *selectLineContent = totalLines[curIndex];
+        NSInteger subStringLength = selection.end.column - selection.start.column;
+        if (subStringLength) {
+            NSString *userSelectContent = [selectLineContent substringWithRange:NSMakeRange(selection.start.column, subStringLength)];
+            NSString *insertContent = [NSString stringWithFormat:@"#import \"%@.h\"", userSelectContent];
+            for (int i = 0; i < totalLinesCount; i++) {
+                NSString *lineContent = totalLines[i];
+                if ([lineContent containsString:@"@interface"]) {
+                    [totalLines insertObject:insertContent atIndex:i - 1];
+                    break;
+                }
             }
         }
     }
